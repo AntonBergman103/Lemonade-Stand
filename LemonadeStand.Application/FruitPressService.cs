@@ -23,10 +23,23 @@ namespace LemonadeStand.Application
             int fruitCount = 0;
             foreach (var fruit in fruits)
             {
-
+                if (fruit.GetType() == recipe.AllowedFruit)
+                {
+                    fruitCount++;
+                }
             }
 
-            return;
+            if (fruitCount < quantityGlass)
+            {
+                return new FruitPressResult(false, "Not enough fruit for the beverage or the wrong fruit", 0);
+            }
+
+            // om allt går igenom kolla om kunden får växel 
+            decimal changeBack = moneyPaid - totalCost;
+
+
+
+            return new FruitPressResult(true, "purchase completed!", changeBack);
         }
         
     }

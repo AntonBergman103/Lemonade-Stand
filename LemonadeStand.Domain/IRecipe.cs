@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 
 namespace LemonadeStand.Domain
 {
-    public interface IRecipe
+    public interface IRecipe // interface  (ritning/kontrakt/mall)
     {
         string Name { get; }
         Type AllowedFruit { get; }
-        decimal PricePerGlass { get; }
+        int PricePerGlass { get; }
+
+        decimal ConsumptionPerGlass { get; }
+
+
+
+        
     }
 
 }

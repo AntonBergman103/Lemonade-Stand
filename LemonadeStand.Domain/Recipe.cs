@@ -6,17 +6,24 @@ using System.Threading.Tasks;
 
 namespace LemonadeStand.Domain
 {
-    public class Recipe : IRecipe
+    public class Recipe : IRecipe // klassen implementerar mallen/kontraktet/ritningen Irecipe
     {
         public string Name { get; }
         public Type AllowedFruit { get; }
-        public decimal PricePerGlass { get; }
+       public int PricePerGlass { get; }
+        public decimal ConsumptionPerGlass { get; }
 
-        public Recipe(string name, Type fruitType, decimal pricePerGlass)
+
+
+        //konstruktor 
+        public Recipe(string name, Type fruitType, int pricePerGlass, decimal consumptionPerGlass )
         {
             Name = name;
             AllowedFruit = fruitType;
             PricePerGlass = pricePerGlass;
+            ConsumptionPerGlass = consumptionPerGlass;
+
+           
         }
     }
 

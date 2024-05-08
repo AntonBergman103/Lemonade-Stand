@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace LemonadeStand.Domain
 {
     
- 
-        public interface IFruit
-        {
+        //en mall för andra koddelar som beskriver en frukt
+        public interface IFruit // interface  (ritning/kontrakt/mall)
+    {
             string Name { get; }
         }
 
