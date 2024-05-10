@@ -12,11 +12,13 @@ namespace LemonadeStand.Domain
         public string Message { get; set; }
         public decimal ChangeBack { get; set; }
 
-        public FruitPressResult(bool succeeded, string message, decimal changeback)
+        public decimal ExcessFruit { get; set; }
+        public FruitPressResult(bool succeeded, string message, decimal changeback, decimal excessfruit)
         {
             Succeeded = succeeded;
             Message = message;
             ChangeBack = changeback;
+            ExcessFruit = excessfruit;
         }
     }
 

@@ -4,20 +4,52 @@
 @using LemonadeStand.Application
 @inject IFruitPressService FruitPressService
 @inject IRecipeService RecipeService
-@* @inject IFruit Fruit *@
+@rendermode InteractiveServer
+@inject NullValidation nullvalidation;
 
 <EditForm Model="@orderModel" OnValidSubmit="HandleFormSubmission" FormName="JuiceOrder">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="form-group">
         <label for="RecipeName" > Recipe </label>
-        <select  @bind ="orderModel.RecipeName"  class="form-select">
-            <option value="1">Select a recipe</option>
+        <InputSelect  @bind-Value="orderModel.RecipeName"  class="form-select">
+            <option value="">Select a recipe</option>
             @foreach (var recipe in recipes)
             {
                 <option value="@recipe.Name">@recipe.Name</option>
             }
-        </select>
+        </InputSelect>
+
+        <div class="form-group">
+            <label for="fruit">Fruit Type:</label>
+            <InputSelect id="fruit" @bind-Value="@orderModel.FruitTypeName" class="form-control">
+                <option value="">Choose what fruit to use</option>
+                @foreach (var fruitType in availableFruits)
+                {
+                    <option value="@fruitType.AssemblyQualifiedName">@fruitType.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="form-group">
+            <label for="fruitQuantity">Fruit Quantity:</label>
+            <InputNumber id="fruitQuantity" @bind-Value="orderModel.FruitQuantity" class="form-control" />
+        </div>
+
+
+        <div class="form-group">
+            <label for="quantity">Number of glasses:</label>
+            <InputNumber id="quantity" @bind-Value="@orderModel.Quantity" class="form-control" />
+        </div>
+
+
+        
+        <div class="form-group">
+            <label for="paidAmount">Amount Paid:</label>
+            <InputNumber id="paidAmount" @bind-Value="@orderModel.PaidAmount" class="form-control" />
+        </div>
+
+
 
     </div>
 
@@ -26,15 +58,28 @@
 
 </EditForm>
 
+@if (result != null)
+{
+    <div class="alert @resultCssClass">
+        <p>@result.Message</p>
+        @if (result.Succeeded)
+        {
+            <p>Change back: @result.ChangeBack.ToString("C")</p>
+            <p> You used @orderModel.FruitQuantity of fruits to make this drink and that leaves you with @result.ExcessFruit amount of fruits left</p>
+        }
+    </div>
+}
 
 @code{
-
+    public NullValidation nullValidation { get; set; }
     OrderModel orderModel = new();
     List<Recipe> recipes = new();
-    // SubmissionResult submissionResult;
-    string recipeName;
+    List<Type> availableFruits = new List<Type> { typeof(Apple), typeof(Orange), typeof(Melon) };
+    FruitPressResult result;
+    private string resultCssClass;
 
-   protected override void OnInitialized()
+
+    protected override void OnInitialized()
     {
         recipes = RecipeService.GetRecipes();
         Console.WriteLine($"Recipes loaded: {recipes.Count}");
@@ -42,15 +87,44 @@
 
     public void HandleFormSubmission(EditContext context) 
     {
-       if (context.Model == orderModel)
+        var errors = nullvalidation.ValidateOrder(orderModel);
+
+        if (errors.Any())
         {
-            Console.WriteLine("Submitting form...");
-            Console.WriteLine($"Recipe Name: {orderModel.RecipeName}");
-            if (string.IsNullOrEmpty(orderModel.RecipeName))
-            {
-                Console.WriteLine("Recipe Name is null or empty.");
-            }
+            result = new FruitPressResult(false, string.Join("\n", errors), 0, 0);
+            resultCssClass = "alert-danger";
+            return;
         }
+        var selectedRecipe = recipes.FirstOrDefault(r => r.Name == orderModel.RecipeName);
+        if (selectedRecipe == null)
+        {
+            result = new FruitPressResult(false, "select a recipe", 0,0);
+            resultCssClass = "alert-danger";
+            return;
+        }
+        if (orderModel.FruitTypeName == null)
+        {
+            result = new FruitPressResult(false, "select a fruittype", 0, 0);
+            resultCssClass = "alert-danger";
+            return;
+        }
+
+        Type fruitType = Type.GetType(orderModel.FruitTypeName);
+       
+        var fruit = (IFruit)Activator.CreateInstance(fruitType);
+        if (fruit != null)
+        {
+            fruit.Quantity = orderModel.FruitQuantity;
+        }
+
+        List<IFruit> fruits = new List<IFruit>();
+        if (fruit != null)
+        {
+            fruits.Add(fruit);            
+        }
+   
+        result = FruitPressService.Produce(selectedRecipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+        resultCssClass = result.Succeeded ? "alert-success" : "alert-danger";
 
        
     }

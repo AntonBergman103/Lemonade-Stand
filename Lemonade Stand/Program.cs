@@ -13,6 +13,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<IFruitPressService, FruitPressService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<NullValidation>();
+
 
 var app = builder.Build();
 

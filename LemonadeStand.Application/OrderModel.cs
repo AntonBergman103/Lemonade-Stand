@@ -12,6 +12,7 @@ namespace LemonadeStand.Application
         public int Quantity { get; set; }
         public int PaidAmount { get; set; }
         public string FruitTypeName { get; set; }  // Stores the fruit type name for conversion to Type
+        public  decimal FruitQuantity { get; set; }
     }
 
 }
