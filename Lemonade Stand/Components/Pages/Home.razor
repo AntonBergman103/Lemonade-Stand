@@ -54,13 +54,13 @@
     </div>
 
 
-    <button type="submit" class="btn btn-primary">Submit Order</button>
+    <button type="submit" class="btn btn-primary m-4">Submit Order</button>
 
 </EditForm>
 
 @if (result != null)
 {
-    <div class="alert @resultCssClass">
+    <div class="alert @resultCssClass m-3">
         <p>@result.Message</p>
         @if (result.Succeeded)
         {
