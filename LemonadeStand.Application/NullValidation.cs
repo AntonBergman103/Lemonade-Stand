@@ -32,7 +32,7 @@ namespace LemonadeStand.Application
                 errors.Add("Please enter the number of glasses.");
             }
 
-            if (orderModel.PaidAmount < 0) 
+            if (orderModel.PaidAmount <= 0) 
             {
                 errors.Add("Please enter a valid amount paid.");
             }
