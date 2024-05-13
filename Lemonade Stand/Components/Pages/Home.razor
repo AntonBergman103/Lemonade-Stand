@@ -82,7 +82,6 @@
     protected override void OnInitialized()
     {
         recipes = RecipeService.GetRecipes();
-        Console.WriteLine($"Recipes loaded: {recipes.Count}");
     }
 
     public void HandleFormSubmission(EditContext context) 
