@@ -130,7 +130,7 @@ namespace LemonadeStand.Test
             var result = service.Produce(recipe, fruits, moneyPaid, quantityGlass);
 
             //Assert
-            Assert.True(result.Succeeded, "The purchase should succeed.");
+            Assert.True(result.Succeeded);
             Assert.Equal("Purchase completed!", result.Message);
             Assert.Equal(10m, result.ChangeBack);
             Assert.Equal(2.5m, result.ExcessFruit);
