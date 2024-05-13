@@ -86,7 +86,7 @@ namespace LemonadeStand.Test
             Assert.Contains("Please enter a valid fruit quantity.", errors);
         }
 
-        [Fact]
+        [Fact] 
         public void ValidateOrder_MissingQuantity_AddErrorMessage()
         {
             //Arrange
