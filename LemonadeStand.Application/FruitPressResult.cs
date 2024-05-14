@@ -8,11 +8,11 @@ namespace LemonadeStand.Domain
 {
     public class FruitPressResult
     {
-        public bool Succeeded { get; set; }
-        public string Message { get; set; }
-        public decimal ChangeBack { get; set; }
+        public bool Succeeded { get; }
+        public string Message { get;  }
+        public decimal ChangeBack { get; }
 
-        public decimal ExcessFruit { get; set; }
+        public decimal ExcessFruit { get; }
         public FruitPressResult(bool succeeded, string message, decimal changeback, decimal excessfruit)
         {
             Succeeded = succeeded;

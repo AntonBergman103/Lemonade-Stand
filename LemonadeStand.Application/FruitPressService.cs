@@ -11,49 +11,39 @@ using System.Threading.Tasks;
 
 namespace LemonadeStand.Application
 {
-    
+
     public class FruitPressService : IFruitPressService
     {
-        public FruitPressResult Produce(IRecipe recipe, ICollection<IFruit> fruits, int moneyPaid, int quantityGlass)
+        private readonly OrderValidator _orderValidator;
+
+        public FruitPressService()
         {
-            List<string> errorMessages = new List<string>(); //istället för att kolla en och en samla alla errors i en lista
+            _orderValidator = new OrderValidator();
+        }
 
-           
+        public FruitPressResult Produce(IRecipe recipe, ICollection<IFruit> fruits, int moneyPaid, int quantityGlass)
+
+        {
+            var errors = _orderValidator.ValidateOrder(new OrderModel(), recipe, fruits, moneyPaid, quantityGlass);
+
+            if (errors.Any())
+            {
+                return new FruitPressResult(false, string.Join(" ", errors), 0, 0);
+            }
+
             decimal totalCost = recipe.PricePerGlass * quantityGlass;
-           
-            if (moneyPaid < totalCost)
+            decimal fruitCount = 0;
+            foreach (var fruit in fruits)
             {
-                errorMessages.Add($"Not enough money for this purchase.{quantityGlass} glasses cost {totalCost}kr in total ");
+                if (fruit.GetType() == recipe.AllowedFruit)
+                {
+                    fruitCount++;
+                }
             }
-           
-            if (!fruits.Any(fruit => fruit.GetType() == recipe.AllowedFruit))
-            {
-                errorMessages.Add("Wrong fruit for that recipe. ");
-
-            }
-
-            // check the total quantity of the fruit
-            decimal fruitCount = fruits.Where(fruit => fruit.GetType() == recipe.AllowedFruit)
-                                       .Sum(fruit => fruit.Quantity);
 
             decimal totalFruitNeeded = recipe.ConsumptionPerGlass * quantityGlass;
-
-           
-            if (fruitCount < totalFruitNeeded)
-            {
-               errorMessages.Add($"Not enough fruit for the beverage. {quantityGlass} glasses require {totalFruitNeeded} units of fruit. ");
-
-            }
-
-            // If there are any errors, return them all
-            if (errorMessages.Any())
-            {
-                return new FruitPressResult(false, string.Join(" ", errorMessages), 0, 0);
-            }
-
-
             decimal changeBack = moneyPaid - totalCost;
-            decimal excessFruit = fruitCount - totalFruitNeeded;
+            decimal excessFruit = fruitCount  - totalFruitNeeded;
 
             return new FruitPressResult(true, "Purchase completed!", changeBack, excessFruit);
         }

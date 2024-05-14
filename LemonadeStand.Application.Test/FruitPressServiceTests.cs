@@ -1,142 +1,155 @@
 ﻿using LemonadeStand.Application;
 using LemonadeStand.Domain;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace LemonadeStand.Test
 {
     public class FruitPressServiceTests
     {
-        [Fact]
-        public void InsufficentFundsTest()
+        private readonly OrderValidator _orderValidator;
+   
+        private readonly FruitPressService _service;
+
+        public FruitPressServiceTests()
         {
-            //Arrange
-            List<Recipe> fakeRecipe = new List<Recipe>();
-
-            Recipe recipe = new Recipe("AppleLemonade", typeof(Apple), 10, 2.5m);
-
-            List<IFruit> fruits = new List<IFruit>
-        { new Apple { Quantity = 2.5m } };
-
-            FruitPressService service = new FruitPressService();
-
-            int moneyPaid = 9; //not enough
-            int quantityGlass = 1;
-
-
-            //Act
-
-            var result = service.Produce(recipe,fruits, moneyPaid, quantityGlass);
-
-
-            //Assert
-
-            Assert.Equal("Not enough money for this purchase.1 glasses cost 10kr in total ", result.Message);
-
+            _orderValidator = new OrderValidator();
+           
+            _service = new FruitPressService();
         }
 
         [Fact]
-        public void WrongFruitForThatRecipeTest()
+        public void ValidateOrder_WithInsufficientFunds_ReturnsError()
         {
-            //Arrange
-            List<Recipe> fakeRecipe = new List<Recipe>();
-
+            // Arrange
             Recipe recipe = new Recipe("Apple Lemonade", typeof(Apple), 10, 2.5m);
 
             List<IFruit> fruits = new List<IFruit>
-        { new Orange { Quantity = 2.5m } };
+            {
+                new Apple(), 
+                new Apple(), 
+                new Apple()  
+            };
 
-            FruitPressService service = new FruitPressService();
+            OrderModel orderModel = new OrderModel
+            {
+                RecipeName = recipe.Name,
+                FruitTypeName = typeof(Apple).AssemblyQualifiedName,
+                FruitQuantity = 3,
+                PaidAmount = 9,
+                Quantity = 1
+            };
 
-            int moneyPaid = 10;
-            int quantityGlass = 1;
-
-
-            //Act
-
-            var result = service.Produce(recipe, fruits, moneyPaid, quantityGlass);
-
-
-            //Assert
-            /* Assert.Equals fungerade inte, utan då small även if satsen för "not enough fruit for the beverage" 
-             * så tog contains, frågan är varför?  */
-            Assert.Contains("Wrong fruit for that recipe. ", result.Message);
-        }
-
-        [Fact]
-        public void NotEnoughFruitForThatBeverageTest()
-        {
-            //Arrange
-            List<Recipe> fakeRecipe = new List<Recipe>();
-            Recipe recipe = new Recipe("Apple Lemonade", typeof(Apple), 10, 2.5m);
-
-            List<IFruit> fruits = new List<IFruit> { new Apple { Quantity = 1 } };
-
-            FruitPressService service = new FruitPressService();
-            int moneyPaid = 10;
-            int quantityGlass = 1;
+            // Act
+            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
             
-            //Act
-            var result = service.Produce(recipe,fruits, moneyPaid, quantityGlass);
 
-            //Assert
-
-            Assert.Equal("Not enough fruit for the beverage. 1 glasses require 2,5 units of fruit. ", result.Message);
+            // Assert
+            Assert.Contains("Not enough money for this purchase. 1 glasses cost 10kr in total.", errors);
         }
 
         [Fact]
-        public void MultipleErrorMessagesTest()
+        public void ValidateOrder_WithWrongFruitForRecipe_ReturnsError()
         {
-            //Arrange
-            List<Recipe> fakeRecipe = new List<Recipe>();
+            // Arrange
             Recipe recipe = new Recipe("Apple Lemonade", typeof(Apple), 10, 2.5m);
 
-            List<IFruit> fruits = new List<IFruit> { new Orange { Quantity = 1 } }; // wrong fruit & insufficent ammount
+            List<IFruit> fruits = new List<IFruit> { new Orange() };
 
-            FruitPressService service = new FruitPressService();
-            int moneyPaid = 1; // not enough money
-            int quantityGlass = 1; 
+            OrderModel orderModel = new OrderModel
+            {
+                RecipeName = recipe.Name,
+                FruitTypeName = typeof(Orange).AssemblyQualifiedName,
+                FruitQuantity = 2.5m,
+                PaidAmount = 10,
+                Quantity = 1
+            };
 
-            //Act
-            var result = service.Produce(recipe, fruits, moneyPaid, quantityGlass);
+            // Act
+            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+            var result = _service.Produce(recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
 
-            //Assert
-
-
-            Assert.Contains("Not enough money for this purchase.1 glasses cost 10kr in total ", result.Message); // Check for insufficient funds message
-            Assert.Contains("Wrong fruit for that recipe. ", result.Message); // Check for wrong fruit type message
-            Assert.Contains("Not enough fruit for the beverage. 1 glasses require 2,5 units of fruit. ", result.Message); // Check for insufficient quantity message
-
+            // Assert
+            Assert.Contains("Wrong fruit for that recipe.", errors);
         }
 
         [Fact]
-        public void PurchaseCompletedTest()
+        public void ValidateOrder_WithInsufficientFruit_ReturnsError()
         {
-            //Arrange
-            List<Recipe> fakeRecipe = new List<Recipe>();
+            // Arrange
             Recipe recipe = new Recipe("Apple Lemonade", typeof(Apple), 10, 2.5m);
 
-            List<IFruit> fruits = new List<IFruit> { new Apple { Quantity = 5 } };  // expected 2.5 leftover
+            List<IFruit> fruits = new List<IFruit> { new Apple() };
 
-            FruitPressService service = new FruitPressService();
-            int moneyPaid = 20; // expected 10 in change
-            int quantityGlass = 1;
+            OrderModel orderModel = new OrderModel
+            {
+                RecipeName = recipe.Name,
+                FruitTypeName = typeof(Apple).AssemblyQualifiedName,
+                FruitQuantity = 1,
+                PaidAmount = 10,
+                Quantity = 1
+            };
 
-            //Act
-            var result = service.Produce(recipe, fruits, moneyPaid, quantityGlass);
+            // Act
+            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+            
 
-            //Assert
+            // Assert
+            Assert.Contains("Not enough fruit for the beverage. 1 glasses require 2,5 units of fruit.", errors);
+        }
+
+        [Fact]
+        public void ValidateOrder_WithMultipleErrors_ReturnsAllErrorMessages()
+        {
+            // Arrange
+            Recipe recipe = new Recipe("Apple Lemonade", typeof(Apple), 10, 2.5m);
+
+            List<IFruit> fruits = new List<IFruit> { new Orange() }; 
+
+            OrderModel orderModel = new OrderModel
+            {
+                RecipeName = recipe.Name,
+                FruitTypeName = typeof(Orange).AssemblyQualifiedName,
+                FruitQuantity = 1,
+                PaidAmount = 1,
+                Quantity = 1
+            };
+
+            // Act
+            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+            var result = _service.Produce(recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+
+            // Assert
+            Assert.Contains("Not enough money for this purchase. 1 glasses cost 10kr in total.", errors); 
+            Assert.Contains("Wrong fruit for that recipe.", errors); 
+            Assert.Contains("Not enough fruit for the beverage. 1 glasses require 2,5 units of fruit.", errors); 
+        }
+
+        [Fact]
+        public void ProduceOrder_WithValidInputs_CompletesPurchaseSuccessfully()
+        {
+            // Arrange
+            Recipe recipe = new Recipe("Apple Lemonade", typeof(Apple), 10, 2.5m);
+
+            List<IFruit> fruits = new List<IFruit> { new Apple(), new Apple(), new Apple() }; // 3 Apples, expected 0.5 leftover
+
+            OrderModel orderModel = new OrderModel
+            {
+                RecipeName = recipe.Name,
+                FruitTypeName = typeof(Apple).AssemblyQualifiedName,
+                FruitQuantity = 3,
+                PaidAmount = 20,
+                Quantity = 1
+            };
+
+            // Act
+            var result = _service.Produce(recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+
+            // Assert
             Assert.True(result.Succeeded);
             Assert.Equal("Purchase completed!", result.Message);
             Assert.Equal(10m, result.ChangeBack);
-            Assert.Equal(2.5m, result.ExcessFruit);
+            Assert.Equal(0.5m, result.ExcessFruit);
         }
-
-
-
     }
 }

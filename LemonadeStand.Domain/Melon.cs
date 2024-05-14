@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace LemonadeStand.Domain
 {
-    public class Melon : Fruit
+    public class Melon : IFruit
     {
-        public Melon() : base("Melon") { }
+        public string Name { get; } = "Melon";
+     
     }
 }

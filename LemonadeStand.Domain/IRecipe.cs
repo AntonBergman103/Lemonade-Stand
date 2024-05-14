@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LemonadeStand.Domain
 {
-    public interface IRecipe // interface  (ritning/kontrakt/mall)
+    public interface IRecipe 
     {
         string Name { get; }
         Type AllowedFruit { get; }

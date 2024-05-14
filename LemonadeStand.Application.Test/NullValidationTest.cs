@@ -31,7 +31,7 @@ namespace LemonadeStand.Test
             var errors = testValidator.ValidateOrder(orderModel);
 
             //Assert
-           
+
             Assert.Contains("Please enter a recipe.", errors);
         }
 
@@ -86,7 +86,7 @@ namespace LemonadeStand.Test
             Assert.Contains("Please enter a valid fruit quantity.", errors);
         }
 
-        [Fact] 
+        [Fact]
         public void ValidateOrder_MissingQuantity_AddErrorMessage()
         {
             //Arrange
@@ -134,6 +134,28 @@ namespace LemonadeStand.Test
             //Assert
 
             Assert.Contains("Please enter a valid amount paid.", errors);
+        }
+
+        [Fact]
+        public void ValidateOrder_AllFieldsValid_NoErrorMessages()
+        {
+            // Arrange
+            var orderModel = new OrderModel
+            {
+                RecipeName = "AppleJuice",
+                FruitTypeName = "Apple",
+                FruitQuantity = 1,
+                Quantity = 1,
+                PaidAmount = 10,
+            };
+
+            var testValidator = new NullValidation();
+
+            // Act
+            var errors = testValidator.ValidateOrder(orderModel);
+
+            // Assert
+            Assert.Empty(errors);
         }
     }
 }

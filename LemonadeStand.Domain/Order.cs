@@ -8,9 +8,9 @@ namespace LemonadeStand.Domain
 {
     public class Order
     {
-        public IRecipe RecipeOrdered { get; set; }
-        public int Quantity { get; set; }
-        public int PaidAmount { get; set; }
+        public IRecipe RecipeOrdered { get; }
+        public int Quantity { get; }
+        public int PaidAmount { get; }
 
         public Order(IRecipe recipe, int quantity, int paidAmount) 
         {

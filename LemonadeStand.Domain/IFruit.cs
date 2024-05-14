@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace LemonadeStand.Domain
 {
 
-    //en mall för andra koddelar som beskriver en frukt
-    public interface IFruit // interface  (ritning/kontrakt/mall)
+    
+    public interface IFruit 
     {
         string Name { get; }
-        decimal Quantity { get; set; }
+      
     }
 
 

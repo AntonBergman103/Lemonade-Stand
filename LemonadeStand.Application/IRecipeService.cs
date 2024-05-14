@@ -6,6 +6,6 @@ namespace LemonadeStand.Application.Interfaces
     public interface IRecipeService
     {
         List<Recipe> GetRecipes();
-        void LoadDefaultRecipes();
+       
     }
 }
