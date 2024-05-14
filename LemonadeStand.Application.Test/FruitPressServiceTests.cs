@@ -47,7 +47,7 @@ namespace LemonadeStand.Test
             // Assert
             Assert.Contains("Not enough money for this purchase. 1 glasses cost 10kr in total.", errors);
         }
-
+        
         [Fact]
         public void ValidateOrder_WithWrongFruitForRecipe_ReturnsError()
         {
