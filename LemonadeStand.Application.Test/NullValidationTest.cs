@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace LemonadeStand.Test
+namespace LemonadeStand.Application.Test
 {
     public class NullValidationTest
     {

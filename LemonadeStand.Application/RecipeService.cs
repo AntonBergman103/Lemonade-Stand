@@ -6,7 +6,7 @@ namespace LemonadeStand.Application
 {
     public class RecipeService : IRecipeService
     {
-        private List<Recipe> recipes = new List<Recipe>
+        private List<Recipe> _recipes = new List<Recipe>
         {
             new Recipe("Apple Lemonade", typeof(Apple), 10, 2.5m),
             new Recipe("Melon Lemonade", typeof(Melon), 12, 0.5m),
@@ -15,7 +15,7 @@ namespace LemonadeStand.Application
 
         public List<Recipe> GetRecipes()
         {
-            return recipes;
+            return _recipes;
         }
     }
 }

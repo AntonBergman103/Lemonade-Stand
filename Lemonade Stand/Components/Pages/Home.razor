@@ -7,24 +7,24 @@
 @rendermode InteractiveServer
 @inject NullValidation nullvalidation;
 
-<h1>Available Recipes</h1>
-<div class="row">
-    <ul class="list-group col-md-1">
-        <li class="list-group-item">Apple Lemonade</li>
-        <li class="list-group-item">Price per glass: 10</li>
-        <li class="list-group-item">Fruits needed per glass: 2.5 Apple(s)</li>
-    </ul>
-    <ul class="list-group col-md-1">
-        <li class="list-group-item">Melon Lemonade</li>
-        <li class="list-group-item">Price per glass: 12</li>
-        <li class="list-group-item">Fruits needed per glass: 0.5 Melon(s)</li>
-    </ul>
-    <ul class="list-group col-md-1">
-        <li class="list-group-item">Orange Lemonade</li>
-        <li class="list-group-item">Price per glass: 9</li>
-        <li class="list-group-item">Fruits needed per glass: 1 Orange(s)</li>
-    </ul>
+<h1 class="text-center mb-4 ">Available Recipes</h1>
+
+<div class="container">
+    
+    <div class="row ">
+        @foreach (var recipe in recipes)
+        {
+            <ul class="list-group col-md-3 justify-content-start">
+
+                <li class="list-group-item">@recipe.Name</li>
+                <li class="list-group-item">Price per glass: @recipe.PricePerGlass</li>
+                <li class="list-group-item">Fruits needed per glass: @recipe.ConsumptionPerGlass</li>
+            </ul>
+        }
+    </div>
+
 </div>
+
 
 <EditForm Model="@orderModel" OnValidSubmit="HandleFormSubmission" FormName="JuiceOrder">
     <DataAnnotationsValidator />
@@ -51,13 +51,10 @@
         </div>
 
         <div class="form-group">
-            <label for="fruitQuantity">Fruit Quantity:</label>
-            <InputSelect id="fruitQuantity" @bind-Value="orderModel.FruitQuantity" class="form-control">
-                @for (int i = 0; i <= 10; i++)
-                {
-                    <option value="@i">@i</option>
-                }
-            </InputSelect>
+            <div class="form-group">
+                <label for="fruitQuantity">Fruit Quantity:</label>
+                <InputNumber id="fruitQuantity" @bind-Value="orderModel.FruitQuantity" class="form-control" min="0" step="1" />
+            </div>
         </div>
 
         <div class="form-group">
