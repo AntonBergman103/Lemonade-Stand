@@ -1,5 +1,5 @@
 ﻿using LemonadeStand.Domain;
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,19 +7,16 @@ namespace LemonadeStand.Application
 {
     public class OrderValidator
     {
-        public List<string> ValidateOrder(OrderModel orderModel,IRecipe recipe, ICollection<IFruit> fruits, decimal moneyPaid, int quantityGlass)
+        public List<string> ValidateOrder(IRecipe recipe, ICollection<IFruit> fruits, decimal moneyPaid, int quantityGlass)
         {
             List<string> errorMessages = new List<string>();
 
             InsufficentFundsForPurchase(recipe, moneyPaid, quantityGlass, errorMessages);
-
             WrongFruitForThatRecipe(recipe, fruits, errorMessages);
 
-            decimal fruitCount = CheckIfCorrectFruitAndAmmount(recipe, fruits);
+           InsufficentAmountOfFruits(recipe, fruits, quantityGlass, errorMessages);
 
-            fruitCount = InsufficentAmountOfFruits(recipe, fruits, quantityGlass, errorMessages);
-
-            return errorMessages;
+            return (errorMessages);
         }
 
         private static void InsufficentFundsForPurchase(IRecipe recipe, decimal moneyPaid, int quantityGlass, List<string> errorMessages)
@@ -37,20 +34,6 @@ namespace LemonadeStand.Application
             {
                 errorMessages.Add("Wrong fruit for that recipe.");
             }
-        }
-
-        private static decimal CheckIfCorrectFruitAndAmmount(IRecipe recipe, ICollection<IFruit> fruits)
-        {
-            decimal fruitCount = 0;
-            foreach (var fruit in fruits)
-            {
-                if (fruit.GetType() == recipe.AllowedFruit)
-                {
-                    fruitCount++;
-                }
-            }
-
-            return fruitCount;
         }
 
         private static decimal InsufficentAmountOfFruits(IRecipe recipe, ICollection<IFruit> fruits, int quantityGlass, List<string> errorMessages)

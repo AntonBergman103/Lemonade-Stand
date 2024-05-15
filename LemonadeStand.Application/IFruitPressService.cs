@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LemonadeStand.Domain;
 
-namespace LemonadeStand.Domain
+namespace LemonadeStand.Application.Interfaces
 {
     public interface IFruitPressService
     {

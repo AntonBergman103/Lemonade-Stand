@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LemonadeStand.Domain
+namespace LemonadeStand.Application.Interfaces
 {
     public class FruitPressResult
     {

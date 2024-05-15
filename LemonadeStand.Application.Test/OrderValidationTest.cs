@@ -1,16 +1,21 @@
-﻿using LemonadeStand.Application;
+﻿
 using LemonadeStand.Domain;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using Xunit;
 
 namespace LemonadeStand.Application.Test
 {
-   
-    public class OrderValidationTest
+
+
+    public class OrderValidationTest : IClassFixture<TestFixture>
     {
         private readonly OrderValidator _orderValidator;
-        public OrderValidationTest() { _orderValidator = new OrderValidator(); }
 
+        public OrderValidationTest(TestFixture fixture)
+        {
+            _orderValidator = fixture.ServiceProvider.GetService<OrderValidator>();
+        }
         [Fact]
         public void ValidateOrder_WithInsufficientFunds_ReturnsError()
         {
@@ -34,7 +39,7 @@ namespace LemonadeStand.Application.Test
             };
 
             // Act
-            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+            var errors = _orderValidator.ValidateOrder(recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
 
 
             // Assert
@@ -59,8 +64,8 @@ namespace LemonadeStand.Application.Test
             };
 
             // Act
-            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
-          
+            var errors = _orderValidator.ValidateOrder(recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+
 
             // Assert
             Assert.Contains("Wrong fruit for that recipe.", errors);
@@ -84,7 +89,7 @@ namespace LemonadeStand.Application.Test
             };
 
             // Act
-            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+            var errors = _orderValidator.ValidateOrder(recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
 
 
             // Assert
@@ -109,7 +114,7 @@ namespace LemonadeStand.Application.Test
             };
 
             // Act
-            var errors = _orderValidator.ValidateOrder(orderModel, recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
+            var errors = _orderValidator.ValidateOrder(recipe, fruits, orderModel.PaidAmount, orderModel.Quantity);
 
 
             // Assert
