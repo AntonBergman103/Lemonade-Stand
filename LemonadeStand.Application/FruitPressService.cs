@@ -9,6 +9,12 @@ namespace LemonadeStand.Application
     {
         private readonly OrderValidator _orderValidator;
 
+        public FruitPressService(OrderValidator orderValidator)
+        {
+            _orderValidator = orderValidator ?? throw new ArgumentNullException(nameof(orderValidator));
+        }
+
+
         public FruitPressResult Produce(IRecipe recipe, ICollection<IFruit> fruits, int moneyPaid, int quantityGlass)
         {
             var errors = _orderValidator.ValidateOrder(recipe, fruits, moneyPaid, quantityGlass);
