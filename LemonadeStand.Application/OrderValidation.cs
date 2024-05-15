@@ -36,7 +36,7 @@ namespace LemonadeStand.Application
             }
         }
 
-        private static decimal InsufficentAmountOfFruits(IRecipe recipe, ICollection<IFruit> fruits, int quantityGlass, List<string> errorMessages)
+        private static void InsufficentAmountOfFruits(IRecipe recipe, ICollection<IFruit> fruits, int quantityGlass, List<string> errorMessages)
         {
             decimal fruitCount = fruits.Count(fruit => fruit.GetType() == recipe.AllowedFruit);
             decimal totalFruitNeeded = recipe.ConsumptionPerGlass * quantityGlass;
@@ -45,7 +45,7 @@ namespace LemonadeStand.Application
                 errorMessages.Add($"Not enough fruit for the beverage. {quantityGlass} glasses require {totalFruitNeeded} units of fruit.");
             }
 
-            return fruitCount;
+           
         }
     }
 }
